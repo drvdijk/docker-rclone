@@ -4,6 +4,8 @@ ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="RadPenguin version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
+ENV TZ="America/Edmonton"
+
 RUN \
  echo "**** install runtime packages ****" && \
   apk add --no-cache \
@@ -19,4 +21,4 @@ RUN \
  rm -rf \
 	/tmp/*
 
-ENTRYPOINT ["/usr/sbin/rclone"]
+ENTRYPOINT ["/usr/bin/rclone"]
