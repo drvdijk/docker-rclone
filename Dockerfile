@@ -20,5 +20,3 @@ RUN \
  echo "**** cleanup ****" && \
  rm -rf \
 	/tmp/*
-
-ENTRYPOINT ["/usr/bin/rclone"]
