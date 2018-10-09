@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:latest
 
 ARG BUILD_DATE
 ARG VERSION
@@ -9,16 +9,20 @@ ENV TZ="America/Edmonton"
 RUN \
  echo "**** install runtime packages ****" && \
   apk add --no-cache \
+    alpine-sdk \
     ca-certificates \
     curl \
+    git \
+    go \
     fuse \
+    fuse-dev \
     tzdata && \
   echo "**** install rclone ****" && \
-  curl --silent --output /tmp/rclone.zip -L "https://downloads.rclone.org/rclone-current-linux-amd64.zip" && \
-  unzip /tmp/rclone.zip -d /tmp && \
-  mv /tmp/rclone-*linux*/rclone /usr/bin/ && \
+  go get -u -v github.com/ncw/rclone && \
+  cp /root/go/bin/rclone /usr/bin/rclone && \
  echo "**** configure fuse ****" && \
- sed -ri 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf
+ sed -ri 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf && \
  echo "**** cleanup ****" && \
  rm -rf \
+        /root/go/ \
 	/tmp/*
