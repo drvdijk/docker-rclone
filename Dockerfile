@@ -9,17 +9,17 @@ ENV TZ="America/Edmonton"
 RUN \
  echo "**** install runtime packages ****" && \
   apk add --no-cache \
-    alpine-sdk \
     ca-certificates \
     curl \
-    git \
-    go \
     fuse \
     fuse-dev \
     tzdata && \
   echo "**** install rclone ****" && \
-  go get -u -v github.com/ncw/rclone && \
-  cp /root/go/bin/rclone /usr/bin/rclone && \
+  curl https://downloads.rclone.org/rclone-current-linux-amd64.zip -o rclone.zip && \
+  unzip rclone.zip && \
+  rm -f rclone.zip && \
+  mv rclone-*/rclone /usr/bin/rclone && \
+  rm -rf rclone-* && \
  echo "**** configure fuse ****" && \
  sed -ri 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf && \
  echo "**** cleanup ****" && \
