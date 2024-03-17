@@ -1,28 +1,18 @@
+# Begin final image
 FROM alpine:latest
 
-ARG BUILD_DATE
-ARG VERSION
-LABEL build_version="RadPenguin version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+RUN apk --no-cache add ca-certificates fuse3 tzdata && \
+  echo "user_allow_other" >> /etc/fuse.conf
 
-ENV TZ="America/Edmonton"
+RUN wget https://beta.rclone.org/branch/fix-7673-dir-wrapping/v1.67.0-beta.7775.8cb7f28f8.fix-7673-dir-wrapping/rclone-v1.67.0-beta.7775.8cb7f28f8.fix-7673-dir-wrapping-linux-amd64.zip && \
+    unzip rclone-v1.67.0-beta.7775.8cb7f28f8.fix-7673-dir-wrapping-linux-amd64.zip && \
+    cp rclone-v1.67.0-beta.7775.8cb7f28f8.fix-7673-dir-wrapping-linux-amd64/rclone /usr/local/bin/ && \
+    rm -rf rclone-v1.67.0-beta.7775.8cb7f28f8.fix-7673-dir-wrapping-linux-amd64*
+#COPY --from=builder /go/src/github.com/rclone/rclone/rclone /usr/local/bin/
 
-RUN \
- echo "**** install runtime packages ****" && \
-  apk add --no-cache \
-    ca-certificates \
-    curl \
-    fuse \
-    fuse-dev \
-    tzdata && \
-  echo "**** install rclone ****" && \
-  curl https://downloads.rclone.org/rclone-current-linux-amd64.zip -o rclone.zip && \
-  unzip rclone.zip && \
-  rm -f rclone.zip && \
-  mv rclone-*/rclone /usr/bin/rclone && \
-  rm -rf rclone-* && \
- echo "**** configure fuse ****" && \
- sed -ri 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf && \
- echo "**** cleanup ****" && \
- rm -rf \
-        /root/go/ \
-	/tmp/*
+RUN addgroup -g 1009 rclone && adduser -u 1009 -Ds /bin/sh -G rclone rclone
+
+ENTRYPOINT [ "rclone" ]
+
+WORKDIR /data
+ENV XDG_CONFIG_HOME=/config
