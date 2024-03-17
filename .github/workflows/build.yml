@@ -23,7 +23,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}
       - name: Show version
         run: |
-          docker run --rm ${{ env.TEST_TAG }}
+          docker run --rm ${{ env.TEST_TAG }} version
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
